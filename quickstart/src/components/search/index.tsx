@@ -1,19 +1,20 @@
 import React from 'react';
+import {Input} from "../input";
 import './styles.css';
 
-export const Search = ({placeholder, value}: any) => {
+export const Search = () => {
   return (
     <div className='search'>
       <div className='search__area'>
-        <input
+        <Input
           type='text'
-          className='search__input'
-          placeholder={placeholder}
+          className='search__text'
+          placeholder='Enter well name'
         />
-        <input
+        <Input
           className='search__submit'
           type='submit'
-          value={value}
+          value='Search'
         />
       </div>
     </div>
