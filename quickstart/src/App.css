@@ -6,9 +6,4 @@ body,
 
 .App {
   height: 100%;
-  text-align: center;
-}
-
-.trajectory-chart__layout {
-  height: 100%;
 }

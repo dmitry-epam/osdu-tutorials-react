@@ -1,0 +1,20 @@
+.trajectory {
+  width: 100%;
+  height: 100%;
+}
+
+.trajectory-chart__layout {
+  height: 100%;
+}
+
+.trajectory-chart__CSS-2D-renderer-layer {
+  display: none;
+}
+
+.visible {
+  visibility: visible;
+}
+
+.hidden {
+  visibility: hidden;
+}
