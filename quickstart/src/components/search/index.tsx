@@ -1,39 +1,48 @@
-import React, { useState, memo, FormEvent, useCallback } from 'react';
+import React, { useState, memo, useCallback, ChangeEvent } from 'react';
 import { Input } from 'components/input';
 import { WellFile } from 'components/well-file';
+import { SearchResult, SearchResultItem } from 'models';
 import './styles.css';
-
-const data = [
-  {
-    type: 'work-product-component/WellLog',
-    name: 'Filename1',
-  },
-  {
-    type: 'work-product-component/WellborePath',
-    name: 'Filename2',
-  },
-];
 
 interface Props {
   onVizualize: () => void;
 }
 
 export const Search = memo(function Search({ onVizualize }: Props) {
-  const [wellFiles, setWellFillesVisible] = useState([{ type: '', name: '' }]);
+  const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
+  const [search, setSearch] = useState('A05-01');
 
-  const showWellFiles = useCallback((event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setWellFillesVisible(data);
+  const showWellFiles = useCallback(() => {
+    fetch(`/find?wellname=${search}`)
+      .then(response => response.json())
+      .then((data: SearchResult) => {
+        setWellFillesVisible(data['work-product-component/WellborePath'] || []);
+      });
+  }, [search]);
+
+  const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
   }, []);
 
   return (
     <div className="search">
-      <form className="search__area" onSubmit={showWellFiles}>
-        <Input type="text" className="search__text" placeholder="Enter well name" />
-        <Input className="search__submit" type="submit" value="Search" />
-      </form>
+      <div className="search__area">
+        <Input
+          type="text"
+          className="search__text"
+          placeholder="Enter well name"
+          onChange={handleSearchChange}
+          value={search}
+        />
+        <Input className="search__submit" type="submit" value="Search" onClick={showWellFiles} />
+      </div>
       {wellFiles.map(well => (
-        <WellFile key={well.type} name={well.name} type={well.type} onVizualize={onVizualize} />
+        <WellFile
+          key={well.filename}
+          name={well.filename}
+          type={well.srn}
+          onVizualize={onVizualize}
+        />
       ))}
     </div>
   );

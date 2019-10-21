@@ -62,5 +62,6 @@
     "prettier": "^1.18.2",
     "react-scripts": "3.2.0",
     "typescript": "3.6.4"
-  }
+  },
+  "proxy": "http://localhost:8080"
 }
