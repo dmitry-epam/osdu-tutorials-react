@@ -7,3 +7,12 @@ export interface TrajectoryPoint {
 export interface Trajectory {
   points: TrajectoryPoint[];
 }
+
+export interface TrajectoryMockPoint {
+  md: number;
+  inclination: number;
+  azimuth: number;
+  tvd: number;
+  ns: number;
+  ew: number;
+}

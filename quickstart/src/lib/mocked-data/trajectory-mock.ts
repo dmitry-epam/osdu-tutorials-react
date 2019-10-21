@@ -1,18 +1,18 @@
-import { Trajectory, TrajectoryPoint } from '../models/trajectory-data';
+import { Trajectory, TrajectoryPoint, TrajectoryMockPoint } from 'lib/models/trajectory-data';
 
-function toTrajectoryPoint(obj: any) {
+function toTrajectoryPoint(obj: TrajectoryMockPoint): TrajectoryPoint {
   return {
     MeasuredDepth: obj.md,
     Azimuth: obj.azimuth,
     Inclination: obj.inclination,
-  } as TrajectoryPoint;
+  };
 }
 
-function responseToTrajectoryPoints(resp: any) {
-  return resp.map((obj: any) => toTrajectoryPoint(obj));
+function responseToTrajectoryPoints(resp: TrajectoryMockPoint[]): TrajectoryPoint[] {
+  return resp.map(obj => toTrajectoryPoint(obj));
 }
 
-const trajectoryPointsMock = [
+const trajectoryPointsMock: TrajectoryMockPoint[] = [
   { md: 0.0, inclination: 0.0, azimuth: 198.09, tvd: 0.0, ns: 0.0, ew: 0.0 },
   {
     md: 656.25,
@@ -544,6 +544,6 @@ const trajectoryPointsMock = [
   },
 ];
 
-export const trajectoryMock = {
+export const trajectoryMock: Trajectory = {
   points: responseToTrajectoryPoints(trajectoryPointsMock),
-} as Trajectory;
+};

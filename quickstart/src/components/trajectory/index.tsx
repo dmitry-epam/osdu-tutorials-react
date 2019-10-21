@@ -1,8 +1,12 @@
-import React, {useRef, useEffect} from 'react';
-import {createTrajectoryChart} from '../../lib/trajectory.chart';
+import React, { useRef, useEffect, memo } from 'react';
+import { createTrajectoryChart } from 'lib/trajectory.chart';
 import './styles.css';
 
-export const TrajectoryChart = ({modifier}: any) => {
+interface Props {
+  className?: string;
+}
+
+export const TrajectoryChart = memo(function TrajectoryChart({ className }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -11,5 +15,5 @@ export const TrajectoryChart = ({modifier}: any) => {
     }
   }, []);
 
-  return <div className={`trajectory ${modifier}`} ref={ref} ></div>
-};
+  return <div className={`trajectory ${className}`} ref={ref}></div>;
+});

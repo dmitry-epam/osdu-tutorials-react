@@ -9,7 +9,7 @@ import {
   SpriteMaterial,
   Sprite,
 } from 'three';
-import { GridConfig } from '../models/grid-config';
+import { GridConfig } from 'lib/models/grid-config';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 
 export enum Sides {

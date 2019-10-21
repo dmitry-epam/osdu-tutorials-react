@@ -1,4 +1,4 @@
-import { Trajectory, TrajectoryPoint } from '../models/trajectory-data';
+import { Trajectory, TrajectoryPoint } from 'lib/models/trajectory-data';
 import { Geometry, LineBasicMaterial, Line, Vector3 } from 'three';
 
 function calculateNextTrajectoryPoint(
