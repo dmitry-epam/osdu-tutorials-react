@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback, ChangeEvent } from 'react';
+import React, { useState, memo, useCallback, ChangeEvent, FormEvent } from 'react';
 import { Input } from 'components/input';
 import { WellFile } from 'components/well-file';
 import { SearchResult, SearchResultItem } from 'models';
@@ -14,7 +14,8 @@ export const Search = memo(function Search({ onVizualize }: Props) {
   const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
   const [search, setSearch] = useState('A05-01');
 
-  const showWellFiles = useCallback(() => {
+  const showWellFiles = useCallback((event: FormEvent) => {
+    event.preventDefault();
     fetch(`${API_HOST}/find?wellname=${search}`)
       .then(response => response.json())
       .then((data: SearchResult) => {
@@ -28,7 +29,7 @@ export const Search = memo(function Search({ onVizualize }: Props) {
 
   return (
     <div className="search">
-      <div className="search__area">
+      <form className="search__area" onSubmit={showWellFiles}>
         <Input
           type="text"
           className="search__text"
@@ -36,13 +37,12 @@ export const Search = memo(function Search({ onVizualize }: Props) {
           onChange={handleSearchChange}
           value={search}
         />
-        <Input className="search__submit" type="submit" value="Search" onClick={showWellFiles} />
-      </div>
+      </form>
       {wellFiles.map(well => (
         <WellFile
           key={well.filename}
-          name={well.filename}
-          type={well.srn}
+          fileName={well.filename}
+          fileType={well.srn}
           onVizualize={onVizualize}
         />
       ))}

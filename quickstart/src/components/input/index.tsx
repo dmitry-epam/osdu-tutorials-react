@@ -6,6 +6,8 @@ interface Props {
   type?: string;
   placeholder?: string;
   value?: string | number | string[] | undefined;
+  name?: string;
+  isChecked?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   onClick?: () => void;
 }
@@ -15,6 +17,8 @@ export const Input = memo(function Input({
   type,
   placeholder,
   value,
+  name,
+  isChecked,
   onChange,
   onClick,
 }: Props) {
@@ -24,8 +28,10 @@ export const Input = memo(function Input({
       type={type}
       placeholder={placeholder}
       value={value}
+      name={name}
       onChange={onChange}
       onClick={onClick}
+      defaultChecked={isChecked}
     />
   );
 });

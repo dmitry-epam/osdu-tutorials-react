@@ -1,7 +1,9 @@
 .search__area {
-  padding: 20px;
+  padding: 40px 20px;
+  background-color: #4286f4;
 }
 
 .search {
-  width: 30%;
+  width: 320px;
+  background:#FAFAFA;
 }

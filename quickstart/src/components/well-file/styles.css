@@ -1,11 +1,88 @@
 .well__data {
-  padding: 5px 20px;
+  padding: 20px;
 }
 
 .well__filetype {
   margin: 0 0 2px 0;
 }
 
+.well__label {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  line-height: 24px;
+  letter-spacing: 1px;
+  color: rgba(0, 0, 0);
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.well__label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.well__checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #eee;
+  border-radius: 50%;
+  border: 2px solid #4285F4;
+}
+
+.well__label:hover input ~ .well__checkmark {
+  background-color: #ccc;
+}
+
+.well__label input:checked ~ .well__checkmark {
+  background-color: white;
+}
+
+.well__checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.well__label input:checked ~ .well__checkmark::after {
+  display: block;
+}
+
+.well__label .well__checkmark::after {
+  top: 4px;
+  left: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4286f4;
+}
+
 .well__visualize {
-  margin: 0 0 0 5px;
+  position: absolute;
+  width: 287px;
+  height: 44px;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(0deg, #4285F4, #4285F4);
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.24), 0px 0px 2px rgba(0, 0, 0, 0.12);
+  border: none;
+  font-size: 14px;
+  line-height: 16px;
+  text-align: center;
+  letter-spacing: 0.0357143em;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.well__visualize:hover {
+  background: rgb(40, 119, 247);
 }
