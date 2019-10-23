@@ -8,12 +8,14 @@ interface Props {
   onVizualize: () => void;
 }
 
+const API_HOST = process.env.REACT_APP_API_HOST || '';
+
 export const Search = memo(function Search({ onVizualize }: Props) {
   const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
   const [search, setSearch] = useState('A05-01');
 
   const showWellFiles = useCallback(() => {
-    fetch(`/find?wellname=${search}`)
+    fetch(`${API_HOST}/find?wellname=${search}`)
       .then(response => response.json())
       .then((data: SearchResult) => {
         setWellFillesVisible(data['work-product-component/WellborePath'] || []);
