@@ -8,20 +8,21 @@ interface Props {
   onVizualize: () => void;
 }
 
-const API_HOST = process.env.REACT_APP_API_HOST || '';
-
 export const Search = memo(function Search({ onVizualize }: Props) {
   const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
   const [search, setSearch] = useState('A05-01');
 
-  const showWellFiles = useCallback((event: FormEvent) => {
-    event.preventDefault();
-    fetch(`${API_HOST}/find?wellname=${search}`)
-      .then(response => response.json())
-      .then((data: SearchResult) => {
-        setWellFillesVisible(data['work-product-component/WellborePath'] || []);
-      });
-  }, [search]);
+  const showWellFiles = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      fetch(`/find?wellname=${search}`)
+        .then(response => response.json())
+        .then((data: SearchResult) => {
+          setWellFillesVisible(data['work-product-component/WellborePath'] || []);
+        });
+    },
+    [search]
+  );
 
   const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
