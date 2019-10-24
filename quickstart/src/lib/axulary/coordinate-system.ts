@@ -11,6 +11,7 @@ import {
 } from 'three';
 import { GridConfig } from 'lib/models/grid-config';
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import { TrajectoryChartConfiguration } from './chart-config';
 
 export enum Sides {
   top,
@@ -19,33 +20,54 @@ export enum Sides {
   right,
 }
 
+export function createTextSprite(text: string) {
+  const fontface = 'Arial';
+  const fontsize = 50;
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  if (context) {
+
+
+    context.font = `${fontsize}px ${fontface}`;
+    context.fillStyle = 'rgba(255, 255, 255, 1.0)';
+    context.fillText(text, 0, fontsize);
+  }
+
+  const texture = new Texture(canvas);
+  texture.minFilter = LinearFilter;
+  texture.needsUpdate = true;
+
+  const spriteMaterial = new SpriteMaterial({
+    map: texture,
+    sizeAttenuation: false
+  });
+
+  const sprite = new Sprite(spriteMaterial);
+  sprite.scale.set(0.04, 0.02, 1);
+
+  return sprite;
+}
+
 export function createTextElement(text: string) {
-  const labelDOM = document.createElement('div');
-  labelDOM.className = 'trajectory-chart__CSS-2D-label';
-  labelDOM.textContent = text;
-  labelDOM.style.color = 'white';
-  const labelObject = new CSS2DObject(labelDOM);
+  const labelContainer = document.createElement('div');
+  const labelElement = document.createElement('div');
+
+  labelContainer.appendChild(labelElement);
+  labelElement.textContent = text;
+  labelElement.style.color = 'white';
+
+
+  const labelObject = new CSS2DObject(labelContainer);
 
   return labelObject;
 }
 
 export function createLabel(text: string, position: Vector3) {
-  const labelObject = createTextElement(text);
+  const labelObject = createTextSprite(text);
   labelObject.position.copy(position);
 
   return labelObject;
-}
-
-export function createLabelsText(minVal: number, maxVal: number, numberOfDivisions: number) {
-  const labels: string[] = [];
-  const delta: number = (maxVal - minVal) / numberOfDivisions;
-
-  for (let i = 0; i < numberOfDivisions + 1; i++) {
-    const nextVal = minVal + delta * i;
-    labels.push(nextVal.toString());
-  }
-
-  return labels;
 }
 
 export function createLabelsForGrid(
@@ -110,29 +132,29 @@ export function createLabelsForGrid(
   return labelObjects;
 }
 
-export function createTextSprite(text: string) {
-  const fontface = 'Arial';
-  const fontsize = 10;
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
+export function createLabels(
+  distance: number,
+  labels: string[],
+  direction: 'x' | 'y' | 'z',
+  inverseLabelsOrder: boolean
+) {
+  const labelsLocal = inverseLabelsOrder 
+    ? labels.slice().reverse()
+    : labels;
+  const labelsObject = new Object3D();
+  const numberOfDivisions = labels.length - 1;
+  const delta = distance / numberOfDivisions;
 
-  if (context) {
-    context.font = `${fontsize}px ${fontface}`;
-    context.fillStyle = 'rgba(255, 255, 255, 1.0)';
-    context.fillText(text, 0, fontsize);
+  const nextLabelCoord = new Vector3(0, 0, 0);
+
+  for (let i = 0; i <= numberOfDivisions; i ++) {
+
+    labelsObject.add(createLabel(labelsLocal[i], nextLabelCoord));
+    nextLabelCoord[direction] += delta;
+
   }
 
-  const texture = new Texture(canvas);
-  texture.minFilter = LinearFilter;
-  texture.needsUpdate = true;
-
-  const spriteMaterial = new SpriteMaterial({
-    map: texture,
-  });
-
-  const sprite = new Sprite(spriteMaterial);
-  sprite.center.set(0, 3);
-  return sprite;
+  return labelsObject;
 }
 
 export function createGrid(config: GridConfig) {
@@ -167,40 +189,55 @@ export function createGrid(config: GridConfig) {
   return grid;
 }
 
-export function createGridedCoordinaesSystem() {
+export function createGridedCoordinaesSystem(chartConfig: TrajectoryChartConfiguration) {
   const gridXY = createGrid({
-    width: 10,
-    height: 10,
-    widthSegments: 10,
-    heightSegments: 10,
+    width: chartConfig.width,
+    height: chartConfig.height,
+    widthSegments: chartConfig.numberOfGridSegments,
+    heightSegments: chartConfig.numberOfGridSegments,
     color: 0xffffff,
   });
 
   const gridYZ = createGrid({
-    width: 10,
-    height: 10,
-    widthSegments: 10,
-    heightSegments: 10,
+    width: chartConfig.depth,
+    height: chartConfig.height,
+    widthSegments: chartConfig.numberOfGridSegments,
+    heightSegments: chartConfig.numberOfGridSegments,
     color: 0xffffff,
   });
   gridYZ.rotateY(-Math.PI / 2);
 
   const gridXZ = createGrid({
-    width: 10,
-    height: 10,
-    widthSegments: 10,
-    heightSegments: 10,
+    width: chartConfig.width,
+    height: chartConfig.depth,
+    widthSegments: chartConfig.numberOfGridSegments,
+    heightSegments: chartConfig.numberOfGridSegments,
     color: 0xffffff,
   });
   gridXZ.rotateX(Math.PI / 2);
 
-  const labels = createLabelsText(0, 10, 10);
-  const labesForAxesX = createLabelsForGrid(labels, Sides.top, new Vector3(0, 10, 0), 10, 10);
-  const labesForAxesY = createLabelsForGrid(labels, Sides.right, new Vector3(0, 10, 0), 10, 10);
-  const labesForAxesZ = createLabelsForGrid(labels, Sides.right, new Vector3(0, 10, 0), 10, 10);
-  labesForAxesX.rotateX(Math.PI / 2);
-  labesForAxesY.rotateY(-Math.PI / 2);
-  labesForAxesZ.rotateX(Math.PI / 2);
+  const labesForAxesX = createLabels(
+    chartConfig.width,
+    chartConfig.widthLabels,
+    'x',
+    false
+  );
+  const labesForAxesY = createLabels(
+    chartConfig.height,
+    chartConfig.heightLabels,
+    'y',
+    true
+  );
+  const labesForAxesZ = createLabels(
+    chartConfig.depth,
+    chartConfig.depthLabels,
+    'z',
+    true
+  );
+  
+  labesForAxesX.position.z = chartConfig.depth;
+  labesForAxesY.position.z = chartConfig.depth;
+  labesForAxesZ.position.x = chartConfig.width;
 
   const gridedCoordinateSystem = new Object3D();
   gridedCoordinateSystem.add(gridXY);
@@ -210,7 +247,10 @@ export function createGridedCoordinaesSystem() {
   gridedCoordinateSystem.add(labesForAxesY);
   gridedCoordinateSystem.add(labesForAxesZ);
 
-  gridedCoordinateSystem.position.set(-10 / 2, -10 / 2, -10 / 2);
+  const coordinateSystemPosition = chartConfig.leftTopPoint.clone();
+  coordinateSystemPosition.y -= chartConfig.height;
+
+  gridedCoordinateSystem.position.copy(coordinateSystemPosition);
 
   return gridedCoordinateSystem;
 }

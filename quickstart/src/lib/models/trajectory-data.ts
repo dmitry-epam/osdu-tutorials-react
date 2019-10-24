@@ -1,11 +1,13 @@
-export interface TrajectoryPoint {
-  MeasuredDepth: number;
-  Inclination: number;
-  Azimuth: number;
+export interface TrajectoryDataPoint {
+  measuredDepth: number;
+  inclination: number;
+  azimuth: number;
+  x: number,
+  y: number
 }
 
-export interface Trajectory {
-  points: TrajectoryPoint[];
+export interface TrajectoryData {
+  points: TrajectoryDataPoint[];
 }
 
 export interface TrajectoryMockPoint {
@@ -15,4 +17,6 @@ export interface TrajectoryMockPoint {
   tvd: number;
   ns: number;
   ew: number;
+  x: number;
+  y: number;
 }

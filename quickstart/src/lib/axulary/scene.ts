@@ -1,6 +1,7 @@
-import { PerspectiveCamera, Scene, WebGLRenderer, AxesHelper, Camera, Renderer } from 'three';
+import { AxesHelper, Camera, PerspectiveCamera, Renderer, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer';
+import { TrajectoryChartConfiguration } from './chart-config';
 
 export function createRenderer(container: HTMLElement) {
   const sceneWidth = container.clientWidth;
@@ -30,12 +31,11 @@ export function createCamera(renderer: Renderer) {
   const fieldOfVision = 30;
   const aspectRatio = sceneWidth / sceneHeight;
   const nearPlane = 0.1;
-  const farPlane = 10000;
+  const farPlane = 1000;
 
   const camera = new PerspectiveCamera(fieldOfVision, aspectRatio, nearPlane, farPlane);
 
   camera.lookAt(0, 0, 0);
-  camera.position.set(0, 10, 10);
 
   return camera;
 }
@@ -58,4 +58,29 @@ export function createCameraControl(camera: Camera, canvas: HTMLCanvasElement) {
   cameraControl.rotateSpeed = 5;
 
   return cameraControl;
+}
+
+export function setUpCameraForChart(
+  camera: PerspectiveCamera,
+  cameraControl: OrbitControls,
+  chartConfig: TrajectoryChartConfiguration,
+) {
+  const maxChartDimension = Math.max(
+    chartConfig.width,
+    chartConfig.height,
+    chartConfig.depth
+  );
+
+  camera.near = maxChartDimension / 100;
+  camera.far = maxChartDimension * 100;
+
+  const cameraPosition = chartConfig.centerPoint.clone();
+  cameraPosition.x += 3 * chartConfig.width;
+  cameraPosition.y += chartConfig.height;
+  cameraPosition.z += 3 * chartConfig.depth;
+
+  camera.position.copy(cameraPosition);
+  camera.updateProjectionMatrix();
+
+  cameraControl.target.copy(chartConfig.centerPoint);
 }

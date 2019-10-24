@@ -4,12 +4,15 @@ import {
   createRenderer,
   createScene,
   createCSS2Renderer,
+  setUpCameraForChart,
 } from './axulary/scene';
 import { createTrajectoryIn3D } from './axulary/trajectory';
 import { trajectoryMock } from './mocked-data/trajectory-mock';
 import { createGridedCoordinaesSystem } from './axulary/coordinate-system';
 import { createSurfaceImitationPlane } from './axulary/axulary-3d-objects';
 import { createChartRootElement } from './axulary/DOM-layout';
+import { calcChartConfiguration } from './axulary/chart-config';
+import { Vector3 } from 'three';
 
 export function createTrajectoryChart(container: HTMLElement) {
   const root = createChartRootElement();
@@ -20,17 +23,32 @@ export function createTrajectoryChart(container: HTMLElement) {
   const scene = createScene();
   const camera = createCamera(renderer);
   const cameraControl = createCameraControl(camera, renderer.domElement);
-  const coordinatesSystem = createGridedCoordinaesSystem();
+
   const trajectory = createTrajectoryIn3D(trajectoryMock);
-  const surfaceImitationPlane = createSurfaceImitationPlane();
+  const trajectoryOnChartCoordinates = new Vector3(0, 0, 0);
+  const trajectoryRealWorldCoordinates = new Vector3(
+    trajectoryMock.points[0].x,
+    trajectoryMock.points[0].measuredDepth,
+    trajectoryMock.points[0].y,
+  );
+
+  const chartConfig = calcChartConfiguration(
+    trajectory,
+    trajectoryOnChartCoordinates,
+    trajectoryRealWorldCoordinates
+  );
+  const coordinatesSystem = createGridedCoordinaesSystem(chartConfig);
+  const surfaceImitationPlane = createSurfaceImitationPlane(chartConfig);
 
   scene.add(trajectory);
   scene.add(coordinatesSystem);
   scene.add(surfaceImitationPlane);
 
-  trajectory.scale.set(0.001, 0.001, 0.001);
-  trajectory.position.setY(5);
-  surfaceImitationPlane.position.setY(5);
+  setUpCameraForChart(
+    camera,
+    cameraControl,
+    chartConfig
+  );
 
   function render() {
     renderer.render(scene, camera);
