@@ -15,7 +15,7 @@ function responseToTrajectoryPoints(resp: TrajectoryMockPoint[]): TrajectoryData
 }
 
 const trajectoryPointsMock: TrajectoryMockPoint[] = [
-  { md: 0.0, inclination: 0.0, azimuth: 198.09, tvd: 0.0, ns: 0.0, ew: 0.0, x: 500, y: 1000 },
+  { md: 150, inclination: 0.0, azimuth: 198.09, tvd: 150, ns: 0.0, ew: 0.0, x: 500, y: 1000 },
   {
     md: 656.25,
     inclination: 0.087500000000008932,

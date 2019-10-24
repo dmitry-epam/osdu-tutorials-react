@@ -31,9 +31,17 @@ function calculateTrajectoryPointsIn3D(trajectory: TrajectoryData): Vector3[] {
   const pointsIn3D: Vector3[] = [];
   const numberOfPoints: number = trajectory.points.length;
 
-  let prevPoint = new Vector3(0, 0, 0);
-  let prevPointMeasuredDepth = 0;
-  for (let i = 0; i < numberOfPoints - 1; i++) {
+  const firstPointData = trajectory.points[0];
+  const firstPoint = new Vector3(
+    0,
+    firstPointData.measuredDepth,
+    0
+  );
+  pointsIn3D.push(firstPoint);
+
+  let prevPoint = firstPoint.clone();
+  let prevPointMeasuredDepth = firstPointData.measuredDepth;
+  for (let i = 1; i < numberOfPoints - 1; i++) {
     const nextPointData = trajectory.points[i];
 
     const nextPoint = calculateNextTrajectoryPoint(
@@ -67,6 +75,9 @@ function createLineIn3D(points: Vector3[]): Line {
 export function createTrajectoryIn3D(trajectory: TrajectoryData) {
   const points = calculateTrajectoryPointsIn3D(trajectory);
   const trajectoryObject3D = createLineIn3D(points);
+
+  const trajectoryFirstPointHeight = points[0].y;
+  trajectoryObject3D.translateY(-trajectoryFirstPointHeight);
 
   return trajectoryObject3D;
 }
