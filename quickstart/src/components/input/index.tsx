@@ -1,4 +1,4 @@
-import React, { memo, ChangeEvent } from 'react';
+import React, { memo, ChangeEvent, MouseEvent, FormEvent } from 'react';
 import './styles.css';
 
 interface Props {
@@ -7,9 +7,8 @@ interface Props {
   placeholder?: string;
   value?: string | number | string[] | undefined;
   name?: string;
-  isChecked?: boolean;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
-  onClick?: () => void;
+  onClick?: (event: FormEvent | MouseEvent) => void;
 }
 
 export const Input = memo(function Input({
@@ -18,7 +17,6 @@ export const Input = memo(function Input({
   placeholder,
   value,
   name,
-  isChecked,
   onChange,
   onClick,
 }: Props) {
@@ -31,7 +29,6 @@ export const Input = memo(function Input({
       name={name}
       onChange={onChange}
       onClick={onClick}
-      defaultChecked={isChecked}
     />
   );
 });
