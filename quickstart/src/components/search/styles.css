@@ -1,9 +1,13 @@
+.search {
+  min-width: 370px;
+  background:#FAFAFA;
+}
+
 .search__area {
   padding: 40px 20px;
   background-color: #4286f4;
 }
 
-.search {
-  width: 320px;
-  background:#FAFAFA;
+.search__well-area {
+  padding: 10px 20px;
 }
