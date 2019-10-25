@@ -1,6 +1,5 @@
 import { AxesHelper, Camera, PerspectiveCamera, Renderer, Scene, WebGLRenderer } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { TrajectoryChartConfiguration } from './chart-config';
 
 export function createRenderer(container: HTMLElement) {
@@ -15,27 +14,18 @@ export function createRenderer(container: HTMLElement) {
   return renderer;
 }
 
-export function createCSS2Renderer(container: HTMLElement) {
-  const labelRenderer = new CSS2DRenderer();
-  labelRenderer.domElement.classList.add('trajectory-chart__CSS-2D-renderer-layer');
-  labelRenderer.setSize(container.clientWidth, container.clientHeight);
-  container.appendChild(labelRenderer.domElement);
-
-  return labelRenderer;
-}
-
 export function createCamera(renderer: Renderer) {
   const sceneWidth = renderer.domElement.clientWidth;
   const sceneHeight = renderer.domElement.clientHeight;
 
   const fieldOfVision = 30;
   const aspectRatio = sceneWidth / sceneHeight;
-  const nearPlane = 0.1;
-  const farPlane = 1000;
+  const nearPlane = 1000;
+  const farPlane = 1000000;
 
   const camera = new PerspectiveCamera(fieldOfVision, aspectRatio, nearPlane, farPlane);
 
-  camera.lookAt(0, 0, 0);
+  camera.lookAt(0, -3275.373866313359, 0);
 
   return camera;
 }

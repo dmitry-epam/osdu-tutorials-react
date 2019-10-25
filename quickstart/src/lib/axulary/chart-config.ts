@@ -79,7 +79,7 @@ export function calcChartConfiguration(
     startPoint.y = chartTopCenterPoint.y;
     startPoint.z = chartTopCenterPoint.z - spaceForTrajectory.z / 2;
 
-    const minHeight = realWorldTrajectoryCoordinates.y;
+    const minHeight = -realWorldTrajectoryCoordinates.y;
     const maxHeight = realWorldTrajectoryCoordinates.y + spaceForTrajectory.y;
     const labelsForHeight = createLabelsText(
         minHeight,

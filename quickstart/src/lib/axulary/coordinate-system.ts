@@ -5,13 +5,15 @@ import {
   LineBasicMaterial,
   Object3D,
   Texture,
-  LinearFilter,
   SpriteMaterial,
   Sprite,
+  PerspectiveCamera,
+  Vector2,
+  LinearFilter,
 } from 'three';
 import { GridConfig } from 'lib/models/grid-config';
-import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer';
 import { TrajectoryChartConfiguration } from './chart-config';
+import { LabelConfig } from 'lib/models/label-config';
 
 export enum Sides {
   top,
@@ -20,18 +22,35 @@ export enum Sides {
   right,
 }
 
-export function createTextSprite(text: string) {
-  const fontface = 'Arial';
-  const fontsize = 50;
+export function measureTextWidth(text: string, fontSize: number, fontFace: string) {
+  let textWidth = 0;
+
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
 
   if (context) {
+    context.font = `${fontSize}px ${fontFace}`;
+    textWidth = context.measureText(text).width;
+  }
 
+  return textWidth;
+}
 
+export function createTextSprite(text: string, config: LabelConfig) {
+  const fontface = 'Arial';
+  const fontsize = 18;
+  const canvas = document.createElement('canvas');
+  canvas.width = measureTextWidth(text, fontsize, fontface) + 30;
+  canvas.height = fontsize + 10;
+
+  const context = canvas.getContext('2d');
+
+  if (context) {
     context.font = `${fontsize}px ${fontface}`;
-    context.fillStyle = 'rgba(255, 255, 255, 1.0)';
-    context.fillText(text, 0, fontsize);
+    context.fillStyle = 'rgba(210, 210, 210, 1.0)';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(text, canvas.width / 2, canvas.height / 2);
   }
 
   const texture = new Texture(canvas);
@@ -39,104 +58,77 @@ export function createTextSprite(text: string) {
   texture.needsUpdate = true;
 
   const spriteMaterial = new SpriteMaterial({
-    map: texture,
-    sizeAttenuation: false
+    map: texture
   });
 
   const sprite = new Sprite(spriteMaterial);
-  sprite.scale.set(0.04, 0.02, 1);
+  sprite.center.copy(config.rotationCenter);
 
-  return sprite;
+  sprite.onBeforeRender = (renderer, scene, camera) => {
+    const cam = camera as PerspectiveCamera;
+
+    const spriteWorldPos = sprite.getWorldPosition(new Vector3());    
+
+    const distance = cam.position.distanceTo(spriteWorldPos);
+    const vFOV = cam.fov * Math.PI / 180;// 
+    const height = 2 * Math.tan( vFOV / 2 ) * distance;
+
+    const scenePixWidth = renderer.getSize(new Vector2()).x;
+    const scenePixHeight = renderer.getSize(new Vector2()).y;
+    const pixelsHeightRatio = scenePixHeight / height;
+    const pixWidthRatio = scenePixWidth / scenePixHeight * pixelsHeightRatio;
+
+    const desiredHeight = canvas.height / pixelsHeightRatio;
+    const desiredWidth = canvas.width / pixWidthRatio;
+    sprite.scale.set(desiredWidth, desiredHeight, 1);
+
+    if(config.shiftX) {
+      const dimensionSize = config.shiftX.dimension === 'height'
+        ? desiredHeight
+        : desiredWidth;
+      sprite.position.x = config.shiftX.multiplier * dimensionSize / 2;
+    }
+    if(config.shiftY) {
+      const dimensionSize = config.shiftY.dimension === 'height'
+        ? desiredHeight
+        : desiredWidth;
+      sprite.position.y = config.shiftY.multiplier * dimensionSize / 2;
+    }
+    if(config.shiftZ) {
+      const dimensionSize = config.shiftZ.dimension === 'height'
+      ? desiredHeight
+      : desiredWidth;
+      sprite.position.z = config.shiftZ.multiplier * dimensionSize / 2;
+    }
+
+  }
+
+  const spriteBox = new Object3D();
+  spriteBox.add(sprite);
+
+  return spriteBox;
 }
 
-export function createTextElement(text: string) {
-  const labelContainer = document.createElement('div');
-  const labelElement = document.createElement('div');
-
-  labelContainer.appendChild(labelElement);
-  labelElement.textContent = text;
-  labelElement.style.color = 'white';
-
-
-  const labelObject = new CSS2DObject(labelContainer);
-
-  return labelObject;
-}
-
-export function createLabel(text: string, position: Vector3) {
-  const labelObject = createTextSprite(text);
+export function createLabel(
+  text: string,
+  position: Vector3,
+  config: LabelConfig
+) {
+  const labelObject = createTextSprite(
+    text,
+    config
+  );
   labelObject.position.copy(position);
 
   return labelObject;
-}
-
-export function createLabelsForGrid(
-  labels: string[],
-  labelsSide: Sides,
-  topLeftCorner: Vector3,
-  width: number,
-  height: number
-) {
-  let x: number, y: number, dx: number, dy: number;
-  const z = topLeftCorner.z;
-  const labelsNumber = labels.length;
-  const numberOfDivisions = labelsNumber - 1;
-  const labelObjects: Object3D = new Object3D();
-
-  switch (labelsSide) {
-    case Sides.top: {
-      x = topLeftCorner.x;
-      y = topLeftCorner.y;
-      dx = width / numberOfDivisions;
-      dy = 0;
-      break;
-    }
-    case Sides.bottom: {
-      x = topLeftCorner.x;
-      y = topLeftCorner.y - height;
-      dx = width / numberOfDivisions;
-      dy = 0;
-      break;
-    }
-    case Sides.left: {
-      x = topLeftCorner.x;
-      y = topLeftCorner.y;
-      dx = 0;
-      dy = -height / numberOfDivisions;
-      break;
-    }
-    case Sides.right: {
-      x = topLeftCorner.x + width;
-      y = topLeftCorner.y;
-      dx = 0;
-      dy = -height / numberOfDivisions;
-      break;
-    }
-    default: {
-      x = topLeftCorner.x + width;
-      y = topLeftCorner.y;
-      dx = 0;
-      dy = -height / numberOfDivisions;
-      break;
-    }
-  }
-
-  const nextLabelCoord = new Vector3(x, y, z);
-  for (let i = 0; i < labelsNumber; i++) {
-    labelObjects.add(createLabel(labels[i], nextLabelCoord));
-
-    nextLabelCoord.x += dx;
-    nextLabelCoord.y += dy;
-  }
-
-  return labelObjects;
 }
 
 export function createLabels(
   distance: number,
   labels: string[],
   direction: 'x' | 'y' | 'z',
-  inverseLabelsOrder: boolean
+  inverseLabelsOrder: boolean,
+  labelsConfig: LabelConfig
 ) {
   const labelsLocal = inverseLabelsOrder 
     ? labels.slice().reverse()
@@ -148,10 +140,14 @@ export function createLabels(
   const nextLabelCoord = new Vector3(0, 0, 0);
 
   for (let i = 0; i <= numberOfDivisions; i ++) {
+    const label = createLabel(
+      labelsLocal[i],
+      nextLabelCoord,
+      labelsConfig
+    );
+    labelsObject.add(label);
 
-    labelsObject.add(createLabel(labelsLocal[i], nextLabelCoord));
     nextLabelCoord[direction] += delta;
-
   }
 
   return labelsObject;
@@ -216,23 +212,61 @@ export function createGridedCoordinaesSystem(chartConfig: TrajectoryChartConfigu
   });
   gridXZ.rotateX(Math.PI / 2);
 
+  const labesForXConf = {
+    rotationCenter: new Vector2(0.5, 0.5),
+    shiftZ: {
+      dimension: 'width',
+      multiplier: 1
+    },
+    shiftY: {
+      dimension: 'height',
+      multiplier: -1
+    }
+  } as LabelConfig;
   const labesForAxesX = createLabels(
     chartConfig.width,
     chartConfig.widthLabels,
     'x',
-    false
+    false,
+    labesForXConf
   );
+
+  const labesForYConf = {
+    rotationCenter: new Vector2(1, 0.5),
+    shiftX: {
+      dimension: 'width',
+      multiplier: -1
+    },
+    shiftZ: {
+      dimension: 'width',
+      multiplier: 1
+    }
+  } as LabelConfig;
   const labesForAxesY = createLabels(
     chartConfig.height,
     chartConfig.heightLabels,
     'y',
-    true
+    true,
+    labesForYConf
   );
+
+  const labesForZConf = {
+    rotationCenter: new Vector2(0.5, 0.5),
+    shiftX: {
+      dimension: 'width',
+      multiplier: 1
+    },
+    shiftY: {
+      dimension: 'height',
+      multiplier: -1
+    }
+  } as LabelConfig;
   const labesForAxesZ = createLabels(
     chartConfig.depth,
     chartConfig.depthLabels,
     'z',
-    true
+    true,
+    labesForZConf
   );
   
   labesForAxesX.position.z = chartConfig.depth;

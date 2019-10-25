@@ -1,5 +1,5 @@
 import { TrajectoryData, TrajectoryDataPoint } from 'lib/models/trajectory-data';
-import { Geometry, Line, LineBasicMaterial, Vector3, VertexColors, WebGLRenderer } from 'three';
+import { Vector3, VertexColors, WebGLRenderer } from 'three';
 import { Line2 } from 'three/examples/jsm/lines/Line2';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
@@ -40,7 +40,7 @@ export function calculateTrajectoryPointsIn3D(trajectory: TrajectoryData): Vecto
 
   let prevPoint = firstPoint.clone();
   let prevPointMeasuredDepth = firstPointData.measuredDepth;
-  for (let i = 1; i < numberOfPoints - 1; i++) {
+  for (let i = 1; i < numberOfPoints; i++) {
     const nextPointData = trajectory.points[i];
 
     const nextPoint = calculateNextTrajectoryPoint(
@@ -55,20 +55,6 @@ export function calculateTrajectoryPointsIn3D(trajectory: TrajectoryData): Vecto
   }
 
   return pointsIn3D;
-}
-
-export function createLineIn3D(points: Vector3[]): Line {
-  const lineGeometry = new Geometry();
-  lineGeometry.vertices.push(...points);
-
-  const lineMaterial = new LineBasicMaterial({
-    color: 'yellow',
-    linewidth: 3,
-  });
-
-  const line = new Line(lineGeometry, lineMaterial);
-
-  return line;
 }
 
 export function createLine2(points: Vector3[]): Line2 {
