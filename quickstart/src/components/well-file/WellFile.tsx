@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {Input} from 'components/input';
+import {Input} from 'components/input/Input';
 import './styles.css';
 
 interface Props {

@@ -1,7 +1,7 @@
 import React, {useState, memo, useCallback, ChangeEvent, FormEvent, MouseEvent} from 'react';
-import {Input} from 'components/input';
-import {WellFile} from 'components/well-file';
-import {Loader} from 'components/loader';
+import {Input} from 'components/input/Input';
+import {WellFile} from 'components/well-file/WellFile';
+import {Loader} from 'components/loader/Loader';
 import {SearchResult, SearchResultItem} from 'models';
 import './styles.css';
 

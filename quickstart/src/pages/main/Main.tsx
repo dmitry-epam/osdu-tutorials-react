@@ -1,6 +1,6 @@
 import React, { useState, memo, useCallback } from 'react';
-import { Search } from 'components/search';
-import { TrajectoryChart } from 'components/trajectory';
+import { Search } from 'components/search/Search';
+import { TrajectoryChart } from 'components/trajectory/Trajectory';
 import './styles.css';
 
 export const MainPage = memo(function MainPage() {
