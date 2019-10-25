@@ -10,7 +10,7 @@ function toTrajectoryPoint(obj: TrajectoryMockPoint): TrajectoryDataPoint {
   };
 }
 
-function responseToTrajectoryPoints(resp: TrajectoryMockPoint[]): TrajectoryDataPoint[] {
+export function responseToTrajectoryPoints(resp: TrajectoryMockPoint[]): TrajectoryDataPoint[] {
   return resp.map(obj => toTrajectoryPoint(obj));
 }
 

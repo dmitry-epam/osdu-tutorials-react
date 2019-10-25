@@ -13,7 +13,7 @@ export const WellFile = memo(function WellFile({fileType, fileName, onVizualize}
     <div className="well">
       <div className="well__data">
         {fileName && (
-          <div>
+          <div className="well__controls">
             <label className="well__label">
               {fileName}
               <Input
@@ -21,10 +21,10 @@ export const WellFile = memo(function WellFile({fileType, fileName, onVizualize}
                 value={fileName}
                 name="radio"
                 className="well__radio"
-                onClick={onVizualize}
               />
               <span className="well__checkmark"></span>
             </label>
+            <button className="well__vizualize" onClick={onVizualize}>Vizualize</button>
           </div>
         )}
       </div>

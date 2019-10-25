@@ -1,36 +1,31 @@
-import React, {useState, memo, useCallback, ChangeEvent, FormEvent, MouseEvent} from 'react';
+import React, { memo, useCallback, ChangeEvent, FormEvent, MouseEvent} from 'react';
 import {Input} from 'components/input/Input';
 import {WellFile} from 'components/well-file/WellFile';
 import {Loader} from 'components/loader/Loader';
-import {SearchResult, SearchResultItem} from 'models';
+import { SearchResultItem} from 'models';
 import './styles.css';
 
 interface Props {
   onVizualize: () => void;
+  onSetSearch: (value: string) => void;
+  showWellFiles: (event: MouseEvent | FormEvent) => void;
+  wellFiles: SearchResultItem[];
+  searchValue: string;
+  isLoaderShown: boolean;
 }
 
-export const Search = memo(function Search({onVizualize}: Props) {
-  const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
-  const [search, setSearch] = useState('A05-01');
-  const [isLoaderShown, showLoader] = useState(false);
-
-  const showWellFiles = useCallback(
-    (event: FormEvent | MouseEvent) => {
-      event.preventDefault();
-      showLoader(true);
-      fetch(`/find?wellname=${search}`)
-        .then(response => response.json())
-        .then((data: SearchResult) => {
-          setWellFillesVisible(data['work-product-component/WellborePath'] || []);
-          showLoader(false);
-        });
-    },
-    [search]
-  );
+export const Search = memo(function Search({
+  onVizualize,
+  searchValue,
+  onSetSearch,
+  isLoaderShown,
+  wellFiles,
+  showWellFiles
+}: Props) {
 
   const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setSearch(event.target.value);
-  }, []);
+    onSetSearch(event.target.value);
+  }, [onSetSearch]);
 
   return (
     <div className="search">
@@ -40,7 +35,7 @@ export const Search = memo(function Search({onVizualize}: Props) {
           className="search__text"
           placeholder="Enter well name"
           onChange={handleSearchChange}
-          value={search}
+          value={searchValue}
         />
         <Input className="search__submit" type="submit" value="Search" onClick={showWellFiles} />
       </form>
