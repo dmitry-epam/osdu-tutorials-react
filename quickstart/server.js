@@ -8,7 +8,8 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'build')));
 
 const proxyPort = process.env.SERVER_PORT || '8080';
-app.use('/api', proxy(`http://server:${proxyPort}`));
+const proxyHost = process.env.SERVER_HOST || 'server';
+app.use('/api', proxy(`http://${proxyHost}:${proxyPort}`));
 
 // Handles any requests that don't match the ones above
 app.get('*', (req, res) => {

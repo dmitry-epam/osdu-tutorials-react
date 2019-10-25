@@ -14,16 +14,20 @@ npm ci
 npm run
 ```
 
-### How to change port
+### How to change backend host and port
 
-Just create `.env` file and define PORT variable. You can find example in `.env.dist` file.
-
-### API calls
-
-In `package.json` you can find `proxy` section. By default it sets to `http://localhost:8080`. It will redirect any calls with unknown routing to defined proxy server. For example:
-
+Create `.env` file and define the following variables:
 ```
-fetch('/find?wellname=my-well')
+SERVER_HOST=backend
+SERVER_PORT=8080
 ```
-
-This request will be proxied to `http://localhost:8080/find?wellname=my-well`.
+Note: when using docker-compose to define and run both UI and backend, the value of SERVER_HOST must be the same as the name of service for your backend:
+```
+services:
+  backend:
+    ...
+  ui:
+    ...
+    depends_on:
+      - backend
+```
