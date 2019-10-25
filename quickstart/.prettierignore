@@ -3,3 +3,5 @@ build/
 
 src/react-app-env.d.ts
 src/serviceWorker.ts
+setupProxy.js
+server.js

@@ -4,3 +4,5 @@ build/
 commitlint.config.js
 src/serviceWorker.ts
 src/react-app-env.d.ts
+setupProxy.js
+server.js

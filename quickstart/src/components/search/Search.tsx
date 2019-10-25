@@ -22,7 +22,6 @@ export const Search = memo(function Search({
   wellFiles,
   showWellFiles
 }: Props) {
-
   const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     onSetSearch(event.target.value);
   }, [onSetSearch]);

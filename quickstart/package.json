@@ -5,6 +5,8 @@
   "dependencies": {
     "@types/papaparse": "^5.0.1",
     "papaparse": "^5.1.0",
+    "express": "^4.17.1",
+    "express-http-proxy": "^1.6.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "three": "^0.109.0"
@@ -17,7 +19,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint --ext=jsx,ts,tsx src",
-    "lint:fix": "eslint --ext=jsx,ts,tsx src --fix"
+    "lint:fix": "eslint --ext=jsx,ts,tsx src --fix",
+    "serve": "node server.js"
   },
   "husky": {
     "hooks": {
@@ -59,11 +62,11 @@
     "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-react": "^7.16.0",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "http-proxy-middleware": "^0.20.0",
     "husky": "^3.0.9",
     "lint-staged": "^9.4.2",
     "prettier": "^1.18.2",
     "react-scripts": "3.2.0",
     "typescript": "3.6.4"
-  },
-  "proxy": "http://server:8080"
+  }
 }

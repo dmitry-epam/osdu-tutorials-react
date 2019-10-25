@@ -18,7 +18,7 @@ export const MainPage = memo(function MainPage() {
     (event: FormEvent | MouseEvent) => {
       event.preventDefault();
       showLoader(true);
-      fetch(`/find?wellname=${search}`)
+      fetch(`/api/find?wellname=${search}`)
         .then(response => response.json())
         .then((data: SearchResult) => {
           setWellFillesVisible(data['work-product-component/WellborePath'] || []);
@@ -29,10 +29,10 @@ export const MainPage = memo(function MainPage() {
   );
 
   const setChartVisible = useCallback(() => {
-    fetch(`/fetch?srn=srn:file/csv:6dd13750df8611e9b5df4fa704076d5c:1`)
+    fetch(`/api/fetch?srn=srn:file/csv:6dd13750df8611e9b5df4fa704076d5c:1`)
       .then(response => response.text())
       .then((data) => {
-        const parsed: any = papa.parse(data, {header: true});
+        const parsed = papa.parse(data, {header: true});
         const dataPoint: TrajectoryData = {
           points: responseToTrajectoryPoints(parsed.data)
         }
