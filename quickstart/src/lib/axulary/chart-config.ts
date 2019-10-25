@@ -1,4 +1,4 @@
-import { Object3D, Box3, Vector3 } from 'three';
+import { Box3, Vector3 } from 'three';
 import { makeVectorCoordinatesPositive } from './math';
 
 export interface TrajectoryChartConfiguration {
@@ -29,10 +29,10 @@ export function createLabelsText(minVal: number, maxVal: number, numberOfDivisio
 }
 
 export function calcSpaceRequiredForTrajectory(
-    trajectoryObj: Object3D,
-    trajectoryStartPoint: Vector3
+    trajectoryPoints: Vector3[]
 ): Vector3 {
-    const boundingBox = new Box3().setFromObject(trajectoryObj);
+    const boundingBox = new Box3().setFromPoints(trajectoryPoints);
+    const trajectoryStartPoint = trajectoryPoints[0];
 
     const byAxisDistanceFromStartToMinPoint = makeVectorCoordinatesPositive(
         trajectoryStartPoint.clone().sub(boundingBox.min.clone())
@@ -59,8 +59,8 @@ export function calcSpaceRequiredForTrajectory(
 }
 
 export function calcChartConfiguration(
-    trajectoryObj: Object3D,
-    trajectoryStartPoint: Vector3,
+    trajectoryPoints: Vector3[],
+    chartTopCenterPoint: Vector3,
     realWorldTrajectoryCoordinates: Vector3
 ) {
     const config = {
@@ -68,17 +68,16 @@ export function calcChartConfiguration(
     } as TrajectoryChartConfiguration;
 
     const spaceForTrajectory = calcSpaceRequiredForTrajectory(
-        trajectoryObj,
-        trajectoryStartPoint
+        trajectoryPoints,
     );
 
-    const centerPoint = trajectoryStartPoint.clone();
+    const centerPoint = chartTopCenterPoint.clone();
     centerPoint.y -= spaceForTrajectory.y / 2;
 
     const startPoint = new Vector3();
-    startPoint.x = trajectoryStartPoint.x - spaceForTrajectory.x / 2;
-    startPoint.y = trajectoryStartPoint.y;
-    startPoint.z = trajectoryStartPoint.z - spaceForTrajectory.z / 2;
+    startPoint.x = chartTopCenterPoint.x - spaceForTrajectory.x / 2;
+    startPoint.y = chartTopCenterPoint.y;
+    startPoint.z = chartTopCenterPoint.z - spaceForTrajectory.z / 2;
 
     const minHeight = realWorldTrajectoryCoordinates.y;
     const maxHeight = realWorldTrajectoryCoordinates.y + spaceForTrajectory.y;

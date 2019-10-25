@@ -1,7 +1,10 @@
 import { TrajectoryData, TrajectoryDataPoint } from 'lib/models/trajectory-data';
-import { Geometry, LineBasicMaterial, Line, Vector3 } from 'three';
+import { Geometry, Line, LineBasicMaterial, Vector3, VertexColors, WebGLRenderer } from 'three';
+import { Line2 } from 'three/examples/jsm/lines/Line2';
+import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry';
+import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial';
 
-function calculateNextTrajectoryPoint(
+export function calculateNextTrajectoryPoint(
   prev: Vector3,
   prevPointMeasuredDepth: number,
   nextPointData: TrajectoryDataPoint
@@ -27,16 +30,12 @@ function calculateNextTrajectoryPoint(
   return nextPoint;
 }
 
-function calculateTrajectoryPointsIn3D(trajectory: TrajectoryData): Vector3[] {
+export function calculateTrajectoryPointsIn3D(trajectory: TrajectoryData): Vector3[] {
   const pointsIn3D: Vector3[] = [];
   const numberOfPoints: number = trajectory.points.length;
 
   const firstPointData = trajectory.points[0];
-  const firstPoint = new Vector3(
-    0,
-    firstPointData.measuredDepth,
-    0
-  );
+  const firstPoint = new Vector3(0, -firstPointData.measuredDepth, 0);
   pointsIn3D.push(firstPoint);
 
   let prevPoint = firstPoint.clone();
@@ -58,7 +57,7 @@ function calculateTrajectoryPointsIn3D(trajectory: TrajectoryData): Vector3[] {
   return pointsIn3D;
 }
 
-function createLineIn3D(points: Vector3[]): Line {
+export function createLineIn3D(points: Vector3[]): Line {
   const lineGeometry = new Geometry();
   lineGeometry.vertices.push(...points);
 
@@ -72,12 +71,40 @@ function createLineIn3D(points: Vector3[]): Line {
   return line;
 }
 
-export function createTrajectoryIn3D(trajectory: TrajectoryData) {
-  const points = calculateTrajectoryPointsIn3D(trajectory);
-  const trajectoryObject3D = createLineIn3D(points);
+export function createLine2(points: Vector3[]): Line2 {
+  const positions: number[] = [];
+  const colors: number[] = [];
+
+  points.forEach(v => {
+    positions.push(v.x, v.y, v.z);
+    colors.push(255, 255, 0);
+  });
+
+  const lineGeometry = new LineGeometry();
+  lineGeometry.setPositions(positions);
+  lineGeometry.setColors(colors);
+
+  const lineMaterial = new LineMaterial({
+    color: 0xffffff,
+    linewidth: 3,
+    vertexColors: VertexColors,
+    dashed: false
+  });
+
+  const line = new Line2(lineGeometry, lineMaterial);
+
+  line.onBeforeRender = (renderer: WebGLRenderer) => {
+    renderer.getSize(lineMaterial.resolution)
+  }
+
+  return line;
+}
+
+export function createTrajectoryLine(points: Vector3[]) {
+  const trajectory = createLine2(points);
 
   const trajectoryFirstPointHeight = points[0].y;
-  trajectoryObject3D.translateY(-trajectoryFirstPointHeight);
+  trajectory.translateY(-trajectoryFirstPointHeight);
 
-  return trajectoryObject3D;
+  return trajectory;
 }
