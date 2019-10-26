@@ -1,13 +1,20 @@
 .search {
   min-width: 370px;
-  background:#FAFAFA;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
 }
 
 .search__area {
-  padding: 40px 20px;
+  padding: 16px;
   background-color: #4286f4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .search__well-area {
-  padding: 10px 30px 0 20px;
+  padding: 16px;
+  display: flex;
+  flex: 1;
 }

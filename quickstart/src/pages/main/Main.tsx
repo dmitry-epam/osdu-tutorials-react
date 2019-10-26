@@ -8,6 +8,9 @@ import { SearchResult, SearchResultItem } from 'models';
 import { responseToTrajectoryPoints } from './jsonToDataPoints';
 import './styles.css';
 
+const hintTitle = 'No Trajectory to display';
+const hintSubTitle = 'Find well and click visualize to appropriate data set';
+
 export const MainPage = memo(function MainPage() {
   const [chartData, setChartData] = useState<TrajectoryData>({ points: [] });
   const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
@@ -53,7 +56,11 @@ export const MainPage = memo(function MainPage() {
           isLoaderShown={isLoaderShown}
         />
         <div className="main__chart-area">
-          {!chartData.points.length ? <Hint /> : <TrajectoryChart chartData={chartData} />}
+          {!chartData.points.length ? (
+            <Hint title={hintTitle} subTitle={hintSubTitle} />
+          ) : (
+            <TrajectoryChart chartData={chartData} />
+          )}
         </div>
       </div>
     </div>

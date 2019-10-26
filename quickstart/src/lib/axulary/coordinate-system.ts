@@ -37,8 +37,8 @@ export function measureTextWidth(text: string, fontSize: number, fontFace: strin
 }
 
 export function createTextSprite(text: string, config: LabelConfig) {
-  const fontface = 'Arial';
-  const fontsize = 18;
+  const fontface = 'Roboto';
+  const fontsize = 14;
   const canvas = document.createElement('canvas');
   canvas.width = measureTextWidth(text, fontsize, fontface) + 30;
   canvas.height = fontsize + 10;
@@ -58,7 +58,7 @@ export function createTextSprite(text: string, config: LabelConfig) {
   texture.needsUpdate = true;
 
   const spriteMaterial = new SpriteMaterial({
-    map: texture
+    map: texture,
   });
 
   const sprite = new Sprite(spriteMaterial);
@@ -67,41 +67,34 @@ export function createTextSprite(text: string, config: LabelConfig) {
   sprite.onBeforeRender = (renderer, scene, camera) => {
     const cam = camera as PerspectiveCamera;
 
-    const spriteWorldPos = sprite.getWorldPosition(new Vector3());    
+    const spriteWorldPos = sprite.getWorldPosition(new Vector3());
 
     const distance = cam.position.distanceTo(spriteWorldPos);
-    const vFOV = cam.fov * Math.PI / 180;// 
-    const height = 2 * Math.tan( vFOV / 2 ) * distance;
+    const vFOV = (cam.fov * Math.PI) / 180; //
+    const height = 2 * Math.tan(vFOV / 2) * distance;
 
     const scenePixWidth = renderer.getSize(new Vector2()).x;
     const scenePixHeight = renderer.getSize(new Vector2()).y;
     const pixelsHeightRatio = scenePixHeight / height;
-    const pixWidthRatio = scenePixWidth / scenePixHeight * pixelsHeightRatio;
+    const pixWidthRatio = (scenePixWidth / scenePixHeight) * pixelsHeightRatio;
 
     const desiredHeight = canvas.height / pixelsHeightRatio;
     const desiredWidth = canvas.width / pixWidthRatio;
     sprite.scale.set(desiredWidth, desiredHeight, 1);
 
-    if(config.shiftX) {
-      const dimensionSize = config.shiftX.dimension === 'height'
-        ? desiredHeight
-        : desiredWidth;
-      sprite.position.x = config.shiftX.multiplier * dimensionSize / 2;
+    if (config.shiftX) {
+      const dimensionSize = config.shiftX.dimension === 'height' ? desiredHeight : desiredWidth;
+      sprite.position.x = (config.shiftX.multiplier * dimensionSize) / 2;
     }
-    if(config.shiftY) {
-      const dimensionSize = config.shiftY.dimension === 'height'
-        ? desiredHeight
-        : desiredWidth;
-      sprite.position.y = config.shiftY.multiplier * dimensionSize / 2;
+    if (config.shiftY) {
+      const dimensionSize = config.shiftY.dimension === 'height' ? desiredHeight : desiredWidth;
+      sprite.position.y = (config.shiftY.multiplier * dimensionSize) / 2;
     }
-    if(config.shiftZ) {
-      const dimensionSize = config.shiftZ.dimension === 'height'
-      ? desiredHeight
-      : desiredWidth;
-      sprite.position.z = config.shiftZ.multiplier * dimensionSize / 2;
+    if (config.shiftZ) {
+      const dimensionSize = config.shiftZ.dimension === 'height' ? desiredHeight : desiredWidth;
+      sprite.position.z = (config.shiftZ.multiplier * dimensionSize) / 2;
     }
-
-  }
+  };
 
   const spriteBox = new Object3D();
   spriteBox.add(sprite);
@@ -109,15 +102,8 @@ export function createTextSprite(text: string, config: LabelConfig) {
   return spriteBox;
 }
 
-export function createLabel(
-  text: string,
-  position: Vector3,
-  config: LabelConfig
-) {
-  const labelObject = createTextSprite(
-    text,
-    config
-  );
+export function createLabel(text: string, position: Vector3, config: LabelConfig) {
+  const labelObject = createTextSprite(text, config);
   labelObject.position.copy(position);
 
   return labelObject;
@@ -130,21 +116,15 @@ export function createLabels(
   inverseLabelsOrder: boolean,
   labelsConfig: LabelConfig
 ) {
-  const labelsLocal = inverseLabelsOrder 
-    ? labels.slice().reverse()
-    : labels;
+  const labelsLocal = inverseLabelsOrder ? labels.slice().reverse() : labels;
   const labelsObject = new Object3D();
   const numberOfDivisions = labels.length - 1;
   const delta = distance / numberOfDivisions;
 
   const nextLabelCoord = new Vector3(0, 0, 0);
 
-  for (let i = 0; i <= numberOfDivisions; i ++) {
-    const label = createLabel(
-      labelsLocal[i],
-      nextLabelCoord,
-      labelsConfig
-    );
+  for (let i = 0; i <= numberOfDivisions; i++) {
+    const label = createLabel(labelsLocal[i], nextLabelCoord, labelsConfig);
     labelsObject.add(label);
 
     nextLabelCoord[direction] += delta;
@@ -216,12 +196,12 @@ export function createGridedCoordinaesSystem(chartConfig: TrajectoryChartConfigu
     rotationCenter: new Vector2(0.5, 0.5),
     shiftZ: {
       dimension: 'width',
-      multiplier: 1
+      multiplier: 1,
     },
     shiftY: {
       dimension: 'height',
-      multiplier: -1
-    }
+      multiplier: -1,
+    },
   } as LabelConfig;
   const labesForAxesX = createLabels(
     chartConfig.width,
@@ -235,12 +215,12 @@ export function createGridedCoordinaesSystem(chartConfig: TrajectoryChartConfigu
     rotationCenter: new Vector2(1, 0.5),
     shiftX: {
       dimension: 'width',
-      multiplier: -1
+      multiplier: -0.25,
     },
     shiftZ: {
       dimension: 'width',
-      multiplier: 1
-    }
+      multiplier: 0.25,
+    },
   } as LabelConfig;
   const labesForAxesY = createLabels(
     chartConfig.height,
@@ -254,12 +234,12 @@ export function createGridedCoordinaesSystem(chartConfig: TrajectoryChartConfigu
     rotationCenter: new Vector2(0.5, 0.5),
     shiftX: {
       dimension: 'width',
-      multiplier: 1
+      multiplier: 1,
     },
     shiftY: {
       dimension: 'height',
-      multiplier: -1
-    }
+      multiplier: -1,
+    },
   } as LabelConfig;
   const labesForAxesZ = createLabels(
     chartConfig.depth,
@@ -268,7 +248,7 @@ export function createGridedCoordinaesSystem(chartConfig: TrajectoryChartConfigu
     true,
     labesForZConf
   );
-  
+
   labesForAxesX.position.z = chartConfig.depth;
   labesForAxesY.position.z = chartConfig.depth;
   labesForAxesZ.position.x = chartConfig.width;

@@ -2,6 +2,7 @@ import React, { memo, useCallback, ChangeEvent, FormEvent, MouseEvent } from 're
 import { Input } from 'components/input';
 import { WellFile } from 'components/well-file';
 import { Loader } from 'components/loader';
+import { Hint } from 'components/hint';
 import { SearchResultItem } from 'models';
 import './styles.css';
 
@@ -13,6 +14,8 @@ interface Props {
   searchValue: string;
   isLoaderShown: boolean;
 }
+
+const hintSubTitle = 'No data sets';
 
 export const Search = memo(function Search({
   onVizualize,
@@ -44,6 +47,8 @@ export const Search = memo(function Search({
       <div className="search__well-area">
         {isLoaderShown ? (
           <Loader />
+        ) : !wellFiles.length ? (
+          <Hint subTitle={hintSubTitle} />
         ) : (
           wellFiles.map(well => (
             <WellFile

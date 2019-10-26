@@ -1,3 +1,7 @@
+.well {
+  width: 100%;
+}
+
 .well__data {
   padding: 20px 0 0 0;
 }
@@ -36,7 +40,7 @@
   width: 20px;
   background-color: #eee;
   border-radius: 50%;
-  border: 2px solid #4285F4;
+  border: 2px solid #4285f4;
 }
 
 .well__label:hover input ~ .well__checkmark {
@@ -48,7 +52,7 @@
 }
 
 .well__checkmark::after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }
@@ -74,25 +78,25 @@
 .well__vizualize {
   width: 85px;
   height: 25px;
-  margin-left: 10px;
   border: none;
   border-radius: 4px;
   text-align: center;
   text-transform: uppercase;
-  background-color: #4285F4;
+  background-color: #4285f4;
   box-shadow: 0px 5.5px 5px rgba(0, 0, 0, 0.24), 0px 9px 18px rgba(0, 0, 0, 0.18);
   color: white;
   font-size: 14px;
   outline: none;
   cursor: pointer;
-  transition: box-shadow .3s;
+  transition: box-shadow 0.3s;
 }
 
 .well__vizualize:hover,
 .well__vizualize:focus {
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14),
+    0 1px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .well__vizualize:active {
-  box-shadow: 0 0 11px rgba(33,33,33,.2); 
+  box-shadow: 0 0 11px rgba(33, 33, 33, 0.2);
 }
