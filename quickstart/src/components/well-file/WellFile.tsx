@@ -1,19 +1,23 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import './styles.css';
 
 interface Props {
-  fileType: string;
+  srn: string;
   fileName: string;
-  onVizualize: () => void;
+  onVizualize: (srn: string) => void;
 }
 
-export const WellFile = memo(function WellFile({ fileName, onVizualize }: Props) {
+export const WellFile = memo(function WellFile({ srn, fileName, onVizualize }: Props) {
+  const handleClick = useCallback(() => {
+    onVizualize(srn);
+  }, [onVizualize, srn]);
+
   return (
     <div className="well">
       {fileName && (
         <div className="well__controls">
           <label className="well__label">{fileName}</label>
-          <button className="well__vizualize" onClick={onVizualize}>
+          <button className="well__vizualize" onClick={handleClick}>
             Vizualize
           </button>
         </div>

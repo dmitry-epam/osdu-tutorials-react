@@ -1,12 +1,13 @@
 import React, { useState, memo, useCallback, FormEvent, MouseEvent } from 'react';
-import papa from 'papaparse';
 import { Search } from 'components/search';
 import { TrajectoryChart } from 'components/trajectory';
 import { Hint } from 'components/hint';
 import { Loader } from 'components/loader';
-import { TrajectoryData } from 'lib/models/trajectory-data';
-import { SearchResult, SearchResultItem } from 'models';
+import { TrajectoryData, TrajectoryPoint } from 'lib/models/trajectory-data';
+import { SearchResultItem } from 'models';
+import { findWell, fetchTrajectory } from 'api';
 import { responseToTrajectoryPoints } from './jsonToDataPoints';
+import { parseScv } from './parseScv';
 import './styles.css';
 
 const hintTitle = 'No Trajectory to display';
@@ -19,38 +20,34 @@ export const MainPage = memo(function MainPage() {
   const [isLoaderShown, showLoader] = useState(false);
   const [trajectoryLoading, setTrajectoryLoading] = useState(false);
 
-  const showWellFiles = useCallback(
+  const handleShowWellFiles = useCallback(
     (event: FormEvent | MouseEvent) => {
       event.preventDefault();
       showLoader(true);
-      fetch(`/api/find?wellname=${search}`)
-        .then(response => response.json())
-        .then((data: SearchResult) => {
-          setWellFillesVisible(data['work-product-component/WellborePath'] || []);
-          showLoader(false);
-        });
+      findWell(search).then(data => {
+        setWellFillesVisible(data['work-product-component/WellborePath'] || []);
+        showLoader(false);
+      });
     },
     [search]
   );
 
-  const setChartVisible = useCallback(() => {
+  const handleVizualize = useCallback((srn: string) => {
     setTrajectoryLoading(true);
-    fetch(`/api/fetch?srn=srn:file/csv:6dd13750df8611e9b5df4fa704076d5c:1`)
-      .then(response => response.text())
-      .then(data => {
-        const parsed = papa.parse(data, { header: true });
-        const dataPoint = { points: responseToTrajectoryPoints(parsed.data) };
-        setChartData(dataPoint);
-        setTrajectoryLoading(false);
-      });
+    fetchTrajectory(srn).then(data => {
+      const points = parseScv<TrajectoryPoint>(data);
+      const dataPoint = { points: responseToTrajectoryPoints(points) };
+      setChartData(dataPoint);
+      setTrajectoryLoading(false);
+    });
   }, []);
 
   return (
     <div className="main">
       <div className="main__page">
         <Search
-          onVizualize={setChartVisible}
-          showWellFiles={showWellFiles}
+          onVizualize={handleVizualize}
+          showWellFiles={handleShowWellFiles}
           onSetSearch={setSearch}
           wellFiles={wellFiles}
           searchValue={search}

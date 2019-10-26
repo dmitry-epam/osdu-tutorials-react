@@ -7,7 +7,7 @@ import { SearchResultItem } from 'models';
 import './styles.css';
 
 interface Props {
-  onVizualize: () => void;
+  onVizualize: (srn: string) => void;
   onSetSearch: (value: string) => void;
   showWellFiles: (event: MouseEvent | FormEvent) => void;
   wellFiles: SearchResultItem[];
@@ -53,8 +53,8 @@ export const Search = memo(function Search({
           wellFiles.map(well => (
             <WellFile
               key={well.filename}
+              srn={well.srn}
               fileName={well.filename}
-              fileType={well.srn}
               onVizualize={onVizualize}
             />
           ))
