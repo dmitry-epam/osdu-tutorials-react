@@ -2,10 +2,6 @@
   width: 100%;
 }
 
-.well__data {
-  padding: 20px 0 0 0;
-}
-
 .well__filetype {
   margin: 0 0 2px 0;
 }
@@ -13,66 +9,16 @@
 .well__label {
   display: block;
   position: relative;
-  padding-left: 35px;
-  margin-bottom: 12px;
   font-size: 15px;
   line-height: 24px;
   letter-spacing: 1px;
   color: rgba(0, 0, 0);
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.well__label input {
-  position: absolute;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.well__checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 20px;
-  width: 20px;
-  background-color: #eee;
-  border-radius: 50%;
-  border: 2px solid #4285f4;
-}
-
-.well__label:hover input ~ .well__checkmark {
-  background-color: #ccc;
-}
-
-.well__label input:checked ~ .well__checkmark {
-  background-color: white;
-}
-
-.well__checkmark::after {
-  content: '';
-  position: absolute;
-  display: none;
-}
-
-.well__label input:checked ~ .well__checkmark::after {
-  display: block;
-}
-
-.well__label .well__checkmark::after {
-  top: 4px;
-  left: 4px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #4286f4;
 }
 
 .well__controls {
   display: flex;
   justify-content: space-between;
+  margin: 8px;
 }
 
 .well__vizualize {

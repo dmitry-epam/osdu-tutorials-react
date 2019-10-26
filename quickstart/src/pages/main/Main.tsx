@@ -3,6 +3,7 @@ import papa from 'papaparse';
 import { Search } from 'components/search';
 import { TrajectoryChart } from 'components/trajectory';
 import { Hint } from 'components/hint';
+import { Loader } from 'components/loader';
 import { TrajectoryData } from 'lib/models/trajectory-data';
 import { SearchResult, SearchResultItem } from 'models';
 import { responseToTrajectoryPoints } from './jsonToDataPoints';
@@ -56,7 +57,9 @@ export const MainPage = memo(function MainPage() {
           isLoaderShown={isLoaderShown}
         />
         <div className="main__chart-area">
-          {!chartData.points.length ? (
+          {trajectoryLoading ? (
+            <Loader />
+          ) : !chartData.points.length ? (
             <Hint title={hintTitle} subTitle={hintSubTitle} />
           ) : (
             <TrajectoryChart chartData={chartData} />
