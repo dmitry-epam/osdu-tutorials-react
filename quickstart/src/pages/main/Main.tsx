@@ -1,18 +1,19 @@
-import React, {useState, memo, useCallback, FormEvent, MouseEvent} from 'react';
+import React, { useState, memo, useCallback, FormEvent, MouseEvent } from 'react';
 import papa from 'papaparse';
-import {Search} from 'components/search/Search';
-import {TrajectoryChart} from 'components/trajectory/Trajectory';
-import {TrajectoryData} from 'lib/models/trajectory-data';
-import {SearchResult, SearchResultItem} from 'models';
-import {responseToTrajectoryPoints} from './jsonToDataPoints';
+import { Search } from 'components/search';
+import { TrajectoryChart } from 'components/trajectory';
+import { Hint } from 'components/hint';
+import { TrajectoryData } from 'lib/models/trajectory-data';
+import { SearchResult, SearchResultItem } from 'models';
+import { responseToTrajectoryPoints } from './jsonToDataPoints';
 import './styles.css';
 
 export const MainPage = memo(function MainPage() {
-  const [visible, setVisible] = useState(false);
-  const [chartData, setChartData] = useState<TrajectoryData>({points: []});
+  const [chartData, setChartData] = useState<TrajectoryData>({ points: [] });
   const [wellFiles, setWellFillesVisible] = useState<SearchResultItem[]>([]);
   const [search, setSearch] = useState('A05-01');
   const [isLoaderShown, showLoader] = useState(false);
+  const [trajectoryLoading, setTrajectoryLoading] = useState(false);
 
   const showWellFiles = useCallback(
     (event: FormEvent | MouseEvent) => {
@@ -29,15 +30,14 @@ export const MainPage = memo(function MainPage() {
   );
 
   const setChartVisible = useCallback(() => {
+    setTrajectoryLoading(true);
     fetch(`/api/fetch?srn=srn:file/csv:6dd13750df8611e9b5df4fa704076d5c:1`)
       .then(response => response.text())
-      .then((data) => {
-        const parsed = papa.parse(data, {header: true});
-        const dataPoint: TrajectoryData = {
-          points: responseToTrajectoryPoints(parsed.data)
-        }
+      .then(data => {
+        const parsed = papa.parse(data, { header: true });
+        const dataPoint = { points: responseToTrajectoryPoints(parsed.data) };
         setChartData(dataPoint);
-        setVisible(true);
+        setTrajectoryLoading(false);
       });
   }, []);
 
@@ -53,7 +53,7 @@ export const MainPage = memo(function MainPage() {
           isLoaderShown={isLoaderShown}
         />
         <div className="main__chart-area">
-          <TrajectoryChart chartData={chartData} className={visible ? 'visible' : 'hidden'} />
+          {!chartData.points.length ? <Hint /> : <TrajectoryChart chartData={chartData} />}
         </div>
       </div>
     </div>

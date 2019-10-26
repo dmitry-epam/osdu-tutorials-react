@@ -1,8 +1,8 @@
-import React, { memo, useCallback, ChangeEvent, FormEvent, MouseEvent} from 'react';
-import {Input} from 'components/input/Input';
-import {WellFile} from 'components/well-file/WellFile';
-import {Loader} from 'components/loader/Loader';
-import { SearchResultItem} from 'models';
+import React, { memo, useCallback, ChangeEvent, FormEvent, MouseEvent } from 'react';
+import { Input } from 'components/input';
+import { WellFile } from 'components/well-file';
+import { Loader } from 'components/loader';
+import { SearchResultItem } from 'models';
 import './styles.css';
 
 interface Props {
@@ -20,11 +20,14 @@ export const Search = memo(function Search({
   onSetSearch,
   isLoaderShown,
   wellFiles,
-  showWellFiles
+  showWellFiles,
 }: Props) {
-  const handleSearchChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    onSetSearch(event.target.value);
-  }, [onSetSearch]);
+  const handleSearchChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      onSetSearch(event.target.value);
+    },
+    [onSetSearch]
+  );
 
   return (
     <div className="search">
@@ -39,14 +42,18 @@ export const Search = memo(function Search({
         <Input className="search__submit" type="submit" value="Search" onClick={showWellFiles} />
       </form>
       <div className="search__well-area">
-        {isLoaderShown ? <Loader /> : wellFiles.map(well => (
-          <WellFile
-            key={well.filename}
-            fileName={well.filename}
-            fileType={well.srn}
-            onVizualize={onVizualize}
-          />
-        ))}
+        {isLoaderShown ? (
+          <Loader />
+        ) : (
+          wellFiles.map(well => (
+            <WellFile
+              key={well.filename}
+              fileName={well.filename}
+              fileType={well.srn}
+              onVizualize={onVizualize}
+            />
+          ))
+        )}
       </div>
     </div>
   );

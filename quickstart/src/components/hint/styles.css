@@ -1,0 +1,20 @@
+.hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.message {
+  margin: 8px;
+  color: #000000de;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.sub-title {
+  font-size: 18px;
+}
